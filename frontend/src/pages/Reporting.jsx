@@ -1,122 +1,286 @@
-import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, PieChart, Pie } from 'recharts';
-import { MOCK_ASSETS, ASSET_STATS, MOCK_ACTIVITY, getScoreColor, getScoreClass } from '../mockData';
-import { dashboardService } from '../services/dashboardService';
+import React, { useState } from 'react';
+import {
+  Users, Calendar, Search, FileText, ShieldCheck, AlertTriangle,
+  BarChart2, FileClock, Mail, HardDrive, Link2, MessageSquare,
+  Settings, TrendingUp, Download, ArrowLeft,
+} from 'lucide-react';
 
-const REPORT_TYPES = [
-  { name: 'Executive Summary', desc: 'High-level PQC readiness for CXO/Board', format: 'PDF', icon: '📊' },
-  { name: 'CBOM Report', desc: 'CycloneDX 1.6 cryptographic bill of materials', format: 'JSON/XML', icon: '📋' },
-  { name: 'Compliance Audit', desc: 'RBI, PCI-DSS, ISO 27001 compliance evidence', format: 'PDF', icon: '✅' },
-  { name: 'Risk Assessment', desc: 'HNDL threat analysis and blast radius report', format: 'PDF', icon: '⚠️' },
-  { name: 'Remediation Progress', desc: '9-month migration roadmap status update', format: 'PDF', icon: '🔧' },
-  { name: 'Quantum Certificate Ledger', desc: 'Blockchain-anchored certificate registry', format: 'PDF/JSON', icon: '🏆' },
+const reportTypes = [
+  'Executive Summary Report',
+  'Assets Discovery Report',
+  'Assets Inventory Report',
+  'CBOM Report',
+  'Posture of PQC Report',
+  'Cyber Rating (Tiers 1–4)',
 ];
 
-const TREND_DATA = [
-  { week: 'W1', assets: 95, score: 28, scans: 5 },
-  { week: 'W2', assets: 102, score: 30, scans: 8 },
-  { week: 'W3', assets: 110, score: 32, scans: 12 },
-  { week: 'W4', assets: 118, score: 35, scans: 15 },
-  { week: 'W5', assets: 124, score: 38, scans: 18 },
-  { week: 'W6', assets: 128, score: ASSET_STATS.avgScore, scans: 22 },
-];
-
-const ownerDist = (() => {
-  const m = {};
-  MOCK_ASSETS.forEach(a => { m[a.owner] = (m[a.owner] || 0) + 1; });
-  return Object.entries(m).sort((a, b) => b[1] - a[1]).map(([name, count]) => ({ name, count }));
-})();
-
-export default function Reporting() {
-  const [generating, setGenerating] = useState(null);
-  const [activities, setActivities] = useState(MOCK_ACTIVITY);
-
-  useEffect(() => {
-    dashboardService.getRecentActivity().then(act => {
-      if (act && act.length > 0) setActivities(act);
-    });
-  }, []);
-
-  const generate = async (name) => {
-    setGenerating(name);
-    // Simulate generation or hit real endpoint if exists
-    setTimeout(() => {
-      setGenerating(null);
-      alert(`${name} report generated successfully.`);
-    }, 2000);
-  };
-
-
+function ScheduledForm() {
+  const [enabled, setEnabled] = useState(true);
   return (
-    <div className="fade-in">
-      <div className="page-title-bar">
-        <div><h1 className="page-title">Reporting</h1><p className="page-subtitle">Automated compliance reporting and analytics dashboard</p></div>
-        <button className="btn btn-primary" onClick={() => generate('all')}>📄 Generate All Reports</button>
+    <div>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
+        <div>
+          <h3 style={{ fontFamily:'var(--font-display)', fontSize:18, fontWeight:600, color:'var(--text-primary)' }}>Schedule Reporting</h3>
+          <p style={{ fontSize:12, color:'var(--text-muted)', marginTop:2 }}>Automate recurring reports to stakeholders</p>
+        </div>
+        {/* Toggle switch */}
+        <div onClick={() => setEnabled(e=>!e)} style={{
+          width:44, height:24, borderRadius:12, cursor:'pointer',
+          background: enabled ? 'var(--cyan)' : 'var(--bg-secondary)',
+          border:'1px solid var(--border-mid)',
+          position:'relative', transition:'background 0.2s',
+        }}>
+          <div style={{
+            position:'absolute', top:3, left: enabled ? 23 : 3,
+            width:16, height:16, borderRadius:'50%',
+            background:'white', transition:'left 0.2s',
+            boxShadow:'0 1px 4px rgba(0,0,0,0.4)',
+          }}/>
+        </div>
       </div>
 
-      {/* Report Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
-        {REPORT_TYPES.map(r => (
-          <div className="card" key={r.name} style={{ cursor: 'pointer' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
-              <span style={{ fontSize: '1.8rem' }}>{r.icon}</span>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <div>
+            <label style={{ fontSize:12, color:'var(--text-muted)', display:'block', marginBottom:6 }}>Report Type</label>
+            <select className="filter-select" style={{ width:'100%' }}>
+              {reportTypes.map(r => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize:12, color:'var(--text-muted)', display:'block', marginBottom:6 }}>Frequency</label>
+            <select className="filter-select" style={{ width:'100%' }}>
+              <option>Daily</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize:12, color:'var(--text-muted)', display:'block', marginBottom:6 }}>Select Assets</label>
+            <select className="filter-select" style={{ width:'100%' }}>
+              <option>All Assets</option><option>High Risk Only</option><option>PQC Critical</option>
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize:12, color:'var(--text-muted)', display:'block', marginBottom:8 }}>Include Sections</label>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
+              {['Discovery','Inventory','CBOM','PQC Posture','Cyber Rating'].map(s => (
+                <label key={s} style={{ display:'flex', alignItems:'center', gap:6, cursor:'pointer', fontSize:12, color:'var(--text-secondary)' }}>
+                  <input type="checkbox" defaultChecked style={{ accentColor:'var(--cyan)' }}/>{s}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <div style={{ background:'var(--bg-secondary)', border:'1px solid var(--border-subtle)', borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:13, fontWeight:600, color:'var(--text-cyan)', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+              <Calendar size={14}/> Schedule Details
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
               <div>
-                <h3 style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{r.name}</h3>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{r.desc}</p>
+                <label style={{ fontSize:11, color:'var(--text-muted)', display:'block', marginBottom:4 }}>Date</label>
+                <input type="date" defaultValue="2026-04-25"
+                  style={{ width:'100%', background:'var(--bg-card)', border:'1px solid var(--border-subtle)', borderRadius:5, padding:'7px 10px', color:'var(--text-primary)', fontSize:13, outline:'none' }}/>
+              </div>
+              <div>
+                <label style={{ fontSize:11, color:'var(--text-muted)', display:'block', marginBottom:4 }}>Time (IST)</label>
+                <input type="time" defaultValue="09:00"
+                  style={{ width:'100%', background:'var(--bg-card)', border:'1px solid var(--border-subtle)', borderRadius:5, padding:'7px 10px', color:'var(--text-primary)', fontSize:13, outline:'none' }}/>
               </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="chip tls13">{r.format}</span>
-              <button className="btn btn-outline" style={{ fontSize: '0.72rem', padding: '4px 12px' }}
-                onClick={() => generate(r.name)} disabled={generating === r.name}>
-                {generating === r.name ? '⏳ Generating...' : '📥 Download'}
-              </button>
+          </div>
+
+          <div style={{ background:'var(--bg-secondary)', border:'1px solid var(--border-subtle)', borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:13, fontWeight:600, color:'var(--text-cyan)', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+              <Mail size={14}/> Delivery Options
+            </div>
+            {[
+              { label:'Email', sub:'executives@org.com', checked:true },
+              { label:'Save to Location', sub:'/Reports/Quarterly/', checked:true },
+              { label:'Download Link', sub:'Generate shareable link', checked:false },
+            ].map(opt => (
+              <label key={opt.label} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10, cursor:'pointer' }}>
+                <input type="checkbox" defaultChecked={opt.checked} style={{ accentColor:'var(--cyan)', flexShrink:0 }}/>
+                <div>
+                  <div style={{ fontSize:13, color:'var(--text-secondary)' }}>{opt.label}</div>
+                  <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'var(--font-mono)' }}>{opt.sub}</div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop:20, display:'flex', justifyContent:'flex-end' }}>
+        <button className="btn btn-primary">Schedule Report →</button>
+      </div>
+    </div>
+  );
+}
+
+function OnDemandForm() {
+  const [selectedType, setSelectedType] = useState('');
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <h3 style={{ fontFamily:'var(--font-display)', fontSize:18, fontWeight:600, color:'var(--text-primary)' }}>On-Demand Reporting</h3>
+        <p style={{ fontSize:12, color:'var(--text-muted)', marginTop:2 }}>Request reports as needed</p>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+        <div>
+          <label style={{ fontSize:12, color:'var(--text-muted)', display:'block', marginBottom:6 }}>Report Type</label>
+          <div style={{ background:'var(--bg-secondary)', border:'1px solid var(--border-subtle)', borderRadius:8, overflow:'hidden' }}>
+            <div style={{ padding:'8px 12px', fontSize:11, color:'var(--text-muted)', borderBottom:'1px solid var(--border-faint)' }}>
+              Select Report
+            </div>
+            {reportTypes.map(r => (
+              <div key={r} onClick={() => setSelectedType(r)}
+                style={{
+                  padding:'10px 14px', cursor:'pointer', fontSize:13,
+                  color: selectedType===r ? 'var(--text-cyan)' : 'var(--text-secondary)',
+                  background: selectedType===r ? 'var(--cyan-dim)' : 'transparent',
+                  borderBottom:'1px solid var(--border-faint)',
+                  transition:'all 0.15s',
+                  display:'flex', alignItems:'center', gap:8,
+                }}>
+                <span style={{ display:'flex', alignItems:'center', color:'var(--text-muted)' }}>
+                  {[BarChart2,Search,FileText,ShieldCheck,ShieldCheck,TrendingUp][reportTypes.indexOf(r)]({size:14})}
+                </span>
+                {r}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <div style={{ background:'var(--bg-secondary)', border:'1px solid var(--border-subtle)', borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:13, fontWeight:600, color:'var(--text-cyan)', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+              <Download size={14}/> Delivery Options
+            </div>
+            {[
+              { label:'Send via Email',     Icon:Mail },
+              { label:'Save to Location',   Icon:HardDrive, sub:'/Reports/OnDemand/' },
+              { label:'Download Link',      Icon:Link2 },
+              { label:'Slack Notification', Icon:MessageSquare },
+            ].map(opt => (
+              <label key={opt.label} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10, cursor:'pointer' }}>
+                <input type="checkbox" defaultChecked={opt.label !== 'Slack Notification'} style={{ accentColor:'var(--cyan)', flexShrink:0 }}/>
+                <opt.Icon size={14} color="var(--text-muted)" style={{ flexShrink:0 }} />
+                <span style={{ marginRight:'auto', fontSize:13, color:'var(--text-secondary)' }}>{opt.label}</span>
+              </label>
+            ))}
+          </div>
+
+          <div style={{ background:'var(--bg-secondary)', border:'1px solid var(--border-subtle)', borderRadius:8, padding:16 }}>
+            <div style={{ fontSize:13, fontWeight:600, color:'var(--text-cyan)', marginBottom:12, display:'flex', alignItems:'center', gap:6 }}>
+              <Settings size={14}/> Advanced Settings</div>
+            <div style={{ display:'flex', gap:10, alignItems:'center', flexWrap:'wrap' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'var(--text-secondary)' }}>
+                File Format:
+                <select className="filter-select" style={{ height:28, fontSize:11 }}>
+                  <option>PDF</option><option>XLSX</option><option>CSV</option>
+                </select>
+              </div>
+              <label style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'var(--text-secondary)', cursor:'pointer' }}>
+                <input type="checkbox" defaultChecked style={{ accentColor:'var(--cyan)' }}/> Include Charts
+              </label>
+              <label style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'var(--text-secondary)', cursor:'pointer' }}>
+                <input type="checkbox" style={{ accentColor:'var(--cyan)' }}/> Password Protect
+              </label>
+            </div>
+          </div>
+
+          <button className="btn btn-primary" style={{ alignSelf:'flex-end', display:'flex', alignItems:'center', gap:6 }}>
+            <BarChart2 size={15}/> Generate Report
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExecutiveForm() {
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <h3 style={{ fontFamily:'var(--font-display)', fontSize:18, fontWeight:600, color:'var(--text-primary)' }}>Executive Reporting</h3>
+        <p style={{ fontSize:12, color:'var(--text-muted)', marginTop:2 }}>High-level summaries for leadership and board review</p>
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
+        {[
+          { title:'Q1 2026 Security Report',   date:'Mar 31, 2026', status:'Ready',    Icon:FileText },
+          { title:'PQC Readiness Summary',     date:'Mar 15, 2026', status:'Ready',    Icon:ShieldCheck },
+          { title:'Asset Risk Overview',       date:'Mar 1, 2026',  status:'Ready',    Icon:AlertTriangle },
+          { title:'Compliance Status Report',  date:'Feb 28, 2026', status:'Archived', Icon:FileClock },
+          { title:'Q4 2025 Security Report',   date:'Dec 31, 2025', status:'Archived', Icon:BarChart2 },
+          { title:'Annual Crypto Audit 2025',  date:'Dec 15, 2025', status:'Archived', Icon:Search },
+        ].map(r => (
+          <div key={r.title} className="card" style={{ padding:'14px 16px', cursor:'pointer', transition:'all 0.2s' }}>
+            <div style={{ marginBottom:10 }}>
+              <r.Icon size={22} color="var(--text-cyan)" strokeWidth={1.5}/>
+            </div>
+            <div style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)', marginBottom:4 }}>{r.title}</div>
+            <div style={{ fontSize:11, color:'var(--text-muted)', fontFamily:'var(--font-mono)' }}>{r.date}</div>
+            <div style={{ marginTop:8 }}>
+              <span className={`badge ${r.status==='Ready' ? 'badge-success' : 'badge-muted'}`}>{r.status}</span>
             </div>
           </div>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {/* Analytics */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-        <div className="card">
-          <div className="card-header"><span className="card-title">Weekly Progress Trend</span></div>
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={TREND_DATA}>
-              <XAxis dataKey="week" stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ background: '#141b2d', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 8, fontSize: 11 }} />
-              <Line type="monotone" dataKey="assets" stroke="#6366f1" strokeWidth={2} name="Assets" dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="score" stroke="#22c55e" strokeWidth={2} name="Avg Score" dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="scans" stroke="#06b6d4" strokeWidth={2} name="Scans" dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
+const panels = [
+  { key:'executive', label:'Executive Reporting', Icon:Users,    desc:'Board-level and leadership summaries' },
+  { key:'scheduled', label:'Scheduled Reporting', Icon:Calendar, desc:'Automate recurring reports to stakeholders' },
+  { key:'ondemand',  label:'On-Demand Reporting', Icon:Search,   desc:'Request any report as needed' },
+];
+
+export default function Reporting() {
+  const [active, setActive] = useState(null);
+
+  if (!active) {
+    return (
+      <div className="animate-fade-in">
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Reporting</h1>
+            <p className="page-subtitle">Generate, schedule, and distribute security reports</p>
+          </div>
         </div>
-
-        <div className="card">
-          <div className="card-header"><span className="card-title">Assets by Owner</span></div>
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={ownerDist} barCategoryGap="15%">
-              <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-              <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} />
-              <Tooltip contentStyle={{ background: '#141b2d', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 8, fontSize: 11 }} />
-              <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="report-option-grid">
+          {panels.map(p => (
+            <div key={p.key} className="report-card animate-slide-up" onClick={() => setActive(p.key)}>
+              <div className="report-card-icon" style={{ display:'flex', justifyContent:'center' }}>
+                <p.Icon size={40} color="var(--text-cyan)" strokeWidth={1.25} />
+              </div>
+              <div className="report-card-title">{p.label}</div>
+              <div className="report-card-desc">{p.desc}</div>
+            </div>
+          ))}
         </div>
       </div>
+    );
+  }
 
-      {/* Scan History */}
+  return (
+    <div className="animate-fade-in">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">{panels.find(p=>p.key===active)?.label}</h1>
+        </div>
+        <button className="btn btn-ghost" onClick={() => setActive(null)} style={{ display:'flex', alignItems:'center', gap:6 }}>
+          <ArrowLeft size={15}/> Back
+        </button>
+      </div>
       <div className="card">
-        <div className="card-header"><span className="card-title">Scan History Log</span></div>
-        {activities.map(a => (
-          <div key={a.id} className="compliance-row">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
-              <div className={`activity-dot ${a.severity}`} />
-              <span style={{ fontSize: '0.82rem' }}>{a.message || a.description}</span>
-            </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{a.time || new Date(a.created_at).toLocaleString()}</span>
-          </div>
-        ))}
+        <div className="card-body">
+          {active === 'executive' && <ExecutiveForm />}
+          {active === 'scheduled' && <ScheduledForm />}
+          {active === 'ondemand'  && <OnDemandForm />}
+        </div>
       </div>
     </div>
   );

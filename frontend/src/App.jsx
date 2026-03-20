@@ -1,55 +1,52 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Home/Dashboard';
-import Assets from './pages/Assets';
-import AssetDiscovery from './pages/AssetDiscovery';
-import CbomDashboard from './pages/CbomDashboard';
-import PosturePQC from './pages/PosturePQC';
-import BlastRadius from './pages/BlastRadius';
+import AssetInventory from './pages/AssetInventory';
+import AssetDiscovery from './components/AssetDiscovery/AssetDiscovery';
+import CBOM from './components/CBOM/CBOM';
+import PostureOfPQC from './components/PQC/PostureOfPQC';
 import CyberRating from './pages/CyberRating';
-import Remediation from './pages/Remediation';
-import Certificates from './pages/Certificates';
-import Compliance from './pages/Compliance';
 import Reporting from './pages/Reporting';
-import Login from './pages/Login';
-import Verify from './pages/Verify';
+import './index.css';
+
+/* Placeholder for pages not yet implemented */
+const Placeholder = ({ name }) => (
+  <div className="animate-fade-in" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'60vh', flexDirection:'column', gap:12 }}>
+    <div style={{ fontSize:48, opacity:0.3 }}>🚧</div>
+    <div style={{ fontFamily:'var(--font-display)', fontSize:20, color:'var(--text-muted)' }}>{name}</div>
+    <div style={{ fontSize:13, color:'var(--text-muted)' }}>Coming soon</div>
+  </div>
+);
 
 export default function App() {
-  const [isAuth, setIsAuth] = useState(!!localStorage.getItem('qsentra_token'));
-  const [currentPage, setCurrentPage] = useState('dashboard');
-
-  if (window.location.pathname.startsWith('/verify/')) {
-    return <BrowserRouter><Routes><Route path="/verify/:assetId" element={<Verify />} /></Routes></BrowserRouter>;
-  }
-
-  if (!isAuth) return <Login onLogin={() => setIsAuth(true)} />;
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <BrowserRouter>
-      <div className="app-layout">
-        <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
-        <div className="main-content">
-          <Header currentPage={currentPage} onLogout={() => { localStorage.removeItem('qsentra_token'); setIsAuth(false); }} />
-          <div className="page-content">
+    <Router>
+      <div className="app-shell">
+        <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+        <div className={`main-wrapper${collapsed ? ' sidebar-collapsed' : ''}`}>
+          <Header collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+          <main className="content-area">
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/assets" element={<Assets />} />
-              <Route path="/discovery" element={<AssetDiscovery />} />
-              <Route path="/cbom" element={<CbomDashboard />} />
-              <Route path="/posture" element={<PosturePQC />} />
-              <Route path="/blast-radius" element={<BlastRadius />} />
-              <Route path="/cyber-rating" element={<CyberRating />} />
-              <Route path="/remediation" element={<Remediation />} />
-              <Route path="/certificates" element={<Certificates />} />
-              <Route path="/compliance" element={<Compliance />} />
-              <Route path="/reporting" element={<Reporting />} />
-              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="/"                element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard"       element={<Dashboard />} />
+              <Route path="/asset-inventory" element={<AssetInventory />} />
+              <Route path="/asset-discovery" element={<AssetDiscovery />} />
+              <Route path="/cbom"            element={<CBOM />} />
+              <Route path="/posture-pqc"     element={<PostureOfPQC />} />
+              <Route path="/cyber-rating"    element={<CyberRating />} />
+              <Route path="/reporting"       element={<Reporting />} />
+              <Route path="/remediation"     element={<Placeholder name="Remediation" />} />
+              <Route path="/certificates"    element={<Placeholder name="Certificates" />} />
+              <Route path="/compliance"      element={<Placeholder name="Compliance" />} />
+              <Route path="*"               element={<Navigate to="/dashboard" replace />} />
             </Routes>
-          </div>
+          </main>
         </div>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
