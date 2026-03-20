@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DISCOVERY_DOMAINS, DISCOVERY_SSL, DISCOVERY_IPS, GRAPH_NODES, GRAPH_EDGES, getScoreColor } from '../mockData';
+import { discoveryAPI } from '../services/apiService';
 import DiscoveryControls from '../components/AssetDiscovery/DiscoveryControls';
 import DiscoveryResults from '../components/AssetDiscovery/DiscoveryResults';
 
@@ -16,42 +17,34 @@ export default function AssetDiscovery() {
 
   const loadQueue = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/discovery/results');
-      const data = await res.json();
+      const data = await discoveryAPI.getResults();
       setLiveQueue(data || []);
-    } catch (e) {
-      console.error(e);
+    } catch {
       setLiveQueue([
-        { id: 1, first_seen: new Date().toISOString(), hostname: 'vpn.pnb.co.in', source: 'DNS', ip_address: '10.0.0.10', status: 'PENDING' },
-        { id: 2, first_seen: new Date().toISOString(), hostname: 'dev.pnb.co.in', source: 'CT_LOG', ip_address: '10.0.0.11', status: 'CONFIRMED' },
+        { id:1, first_seen: new Date().toISOString(), hostname:'vpn.pnb.co.in',  source:'DNS',    ip_address:'10.0.0.10', status:'PENDING' },
+        { id:2, first_seen: new Date().toISOString(), hostname:'dev.pnb.co.in',  source:'CT_LOG', ip_address:'10.0.0.11', status:'CONFIRMED' },
       ]);
     }
   };
 
-  useEffect(() => {
-    loadQueue();
-  }, []);
+  useEffect(() => { loadQueue(); }, []);
 
   const handleStartScan = async (scope, options) => {
     try {
-      await fetch('http://127.0.0.1:8000/api/discovery/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scope, options })
-      });
-      alert(`Discovery started for scope: ${scope}`);
+      await discoveryAPI.startScan(scope, options);
       setTimeout(loadQueue, 2000);
     } catch (e) {
-      console.error(e);
+      console.error('Discovery start failed:', e);
     }
   };
 
   const handleQueueAction = async (action, id) => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/discovery/${action}/${id}`, { method: 'POST' });
+      if (action === 'confirm') await discoveryAPI.confirm(id);
+      else                      await discoveryAPI.ignore(id);
       loadQueue();
     } catch (e) {
-      console.error(e);
+      console.error('Queue action failed:', e);
     }
   };
 

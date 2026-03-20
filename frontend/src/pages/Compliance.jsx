@@ -1,14 +1,16 @@
 import React from 'react';
-import { CheckCircle, AlertCircle, Clock } from 'lucide-react';
+import { FlaskConical, Building2, CreditCard, ClipboardList, Globe, Flag } from 'lucide-react';
 
 const FRAMEWORKS = [
-  { name: 'NIST PQC (FIPS 203/204/205)', status: 'partial', coverage: 10, details: '1/10 assets fully FIPS compliant', icon: '🔬' },
-  { name: 'RBI Digital Payment Security', status: 'compliant', coverage: 85, details: 'Encryption controls active, PQC migration in progress', icon: '🏦' },
-  { name: 'PCI-DSS v4.0 Requirement 4', status: 'partial', coverage: 60, details: 'TLS 1.3 migration in progress for payment assets', icon: '💳' },
-  { name: 'ISO 27001:2022 (A.8.24, A.5.14)', status: 'compliant', coverage: 90, details: 'Cryptographic lifecycle management active, audit trail maintained', icon: '📋' },
-  { name: 'GDPR Article 32', status: 'compliant', coverage: 80, details: 'State-of-art encryption measures implemented', icon: '🇪🇺' },
-  { name: 'India DPDP Act 2023', status: 'compliant', coverage: 75, details: 'Personal data protection controls active', icon: '🇮🇳' },
+  { name: 'NIST PQC (FIPS 203/204/205)',       status: 'partial',   coverage: 10, details: '1/10 assets fully FIPS compliant',                                       Icon: FlaskConical },
+  { name: 'RBI Digital Payment Security',       status: 'compliant', coverage: 85, details: 'Encryption controls active, PQC migration in progress',                   Icon: Building2 },
+  { name: 'PCI-DSS v4.0 Requirement 4',         status: 'partial',   coverage: 60, details: 'TLS 1.3 migration in progress for payment assets',                       Icon: CreditCard },
+  { name: 'ISO 27001:2022 (A.8.24, A.5.14)',   status: 'compliant', coverage: 90, details: 'Cryptographic lifecycle management active, audit trail maintained',       Icon: ClipboardList },
+  { name: 'GDPR Article 32',                    status: 'compliant', coverage: 80, details: 'State-of-art encryption measures implemented',                           Icon: Globe },
+  { name: 'India DPDP Act 2023',                status: 'compliant', coverage: 75, details: 'Personal data protection controls active',                              Icon: Flag },
 ];
+
+import { CheckCircle, AlertCircle, Clock } from 'lucide-react';
 
 const statusConfig = {
   compliant: { color: '#22c55e', bg: 'rgba(34,197,94,0.1)', label: 'Compliant', Icon: CheckCircle },
@@ -50,7 +52,7 @@ export default function Compliance() {
           return (
             <div className="compliance-row" key={fw.name}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-                <span style={{ fontSize: '1.4rem' }}>{fw.icon}</span>
+                <fw.Icon size={22} color="var(--text-cyan)" strokeWidth={1.5} style={{ flexShrink:0 }}/>
                 <div>
                   <div style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-primary)' }}>{fw.name}</div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>{fw.details}</div>
