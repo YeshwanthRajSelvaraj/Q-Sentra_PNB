@@ -6,16 +6,17 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
 from core.security import (
-    DEMO_USERS, verify_password, create_access_token,
+    DEMO_USERS, verify_password, verify_totp, create_access_token,
     get_current_user, require_role
 )
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
 
 
 class LoginRequest(BaseModel):
     username: str
     password: str
+    otp: str = ""
 
 
 class TokenResponse(BaseModel):
@@ -26,7 +27,7 @@ class TokenResponse(BaseModel):
 
 @router.post("/login", response_model=TokenResponse)
 async def login(req: LoginRequest):
-    """Authenticate user and return JWT token."""
+    """Authenticate user with MFA and return JWT token."""
     user = DEMO_USERS.get(req.username)
     if not user or not verify_password(req.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")

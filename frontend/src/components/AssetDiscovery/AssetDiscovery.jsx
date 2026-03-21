@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { domains, sslCerts, ipSubnets, software } from '../../mockData';
+import { downloadCSV } from '../../utils';
 
 const statusBadge = s => {
   const m = {
@@ -17,11 +18,14 @@ function DomainsTab() {
   const filtered = sub.startsWith('All') ? domains : domains.filter(d => d.status === sub.split(' ')[0]);
   return (
     <>
-      <div className="sub-tab-bar">
-        {subs.map(s => (
-          <button key={s} className={`sub-tab-btn${sub === s.split(' ')[0] ? ' active' : ''}`}
-            onClick={() => setSub(s.split(' ')[0])}>{s}</button>
-        ))}
+      <div className="sub-tab-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          {subs.map(s => (
+            <button key={s} className={`sub-tab-btn${sub === s.split(' ')[0] ? ' active' : ''}`}
+              onClick={() => setSub(s.split(' ')[0])}>{s}</button>
+          ))}
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={() => downloadCSV(filtered, 'domains.csv')}>Export CSV</button>
       </div>
       <div className="data-table-wrap">
         <table className="data-table">
@@ -30,7 +34,7 @@ function DomainsTab() {
             <th>Registrar</th><th>Company</th><th>Status</th>
           </tr></thead>
           <tbody>
-            {(sub.startsWith('All') ? domains : domains.filter(d => d.status === sub.split(' ')[0])).map((d,i) => (
+            {filtered.map((d,i) => (
               <tr key={i}>
                 <td style={{ fontSize:11, fontFamily:'var(--font-mono)', color:'var(--text-muted)' }}>{d.detectionDate}</td>
                 <td className="cyan mono" style={{ fontSize:12 }}>{d.domainName}</td>
@@ -50,10 +54,13 @@ function DomainsTab() {
 function SSLTab() {
   return (
     <>
-      <div className="sub-tab-bar">
-        {['New (3)', 'False/ignore (9)', 'Confirmed', 'All (3)'].map(s => (
-          <button key={s} className="sub-tab-btn">{s}</button>
-        ))}
+      <div className="sub-tab-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          {['New (3)', 'False/ignore (9)', 'Confirmed', 'All (3)'].map(s => (
+            <button key={s} className="sub-tab-btn">{s}</button>
+          ))}
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={() => downloadCSV(sslCerts, 'ssl_certs.csv')}>Export CSV</button>
       </div>
       <div className="data-table-wrap">
         <table className="data-table">
@@ -82,10 +89,13 @@ function SSLTab() {
 function IPTab() {
   return (
     <>
-      <div className="sub-tab-bar">
-        {['New (15)', 'False or ignore (10)', 'Confirmed (9)', 'All (34)'].map(s => (
-          <button key={s} className="sub-tab-btn">{s}</button>
-        ))}
+      <div className="sub-tab-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          {['New (15)', 'False or ignore (10)', 'Confirmed (9)', 'All (34)'].map(s => (
+            <button key={s} className="sub-tab-btn">{s}</button>
+          ))}
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={() => downloadCSV(ipSubnets, 'ip_subnets.csv')}>Export CSV</button>
       </div>
       <div className="data-table-wrap">
         <table className="data-table">
@@ -116,10 +126,13 @@ function IPTab() {
 function SoftwareTab() {
   return (
     <>
-      <div className="sub-tab-bar">
-        {['New (10)', 'False or ignore (6)', 'Confirmed (36)', 'All (52)'].map(s => (
-          <button key={s} className="sub-tab-btn">{s}</button>
-        ))}
+      <div className="sub-tab-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          {['New (10)', 'False or ignore (6)', 'Confirmed (36)', 'All (52)'].map(s => (
+            <button key={s} className="sub-tab-btn">{s}</button>
+          ))}
+        </div>
+        <button className="btn btn-ghost btn-sm" onClick={() => downloadCSV(software, 'software.csv')}>Export CSV</button>
       </div>
       <div className="data-table-wrap">
         <table className="data-table">

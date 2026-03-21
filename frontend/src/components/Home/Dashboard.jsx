@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LeafletTooltip } from 'react-leaflet';
+import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LeafletTooltip, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
   Layers, ShieldCheck, ShieldAlert, CheckCircle2,
@@ -51,21 +51,42 @@ function StatCard({ Icon, label, value, decimals, color, bg, badge, badgeColor, 
 /* ── Leaflet satellite map ──────────────────────────── */
 function GeoMap({ points }) {
   const markers = points.length ? points : GEO_FALLBACK;
+  const hub = markers.find(m => m.city === 'Delhi') || markers[0];
+
   return (
-    <div style={{ height: 220, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+    <div style={{ height: 220, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-subtle)', position: 'relative' }}>
       <MapContainer
         center={[20, 70]}
         zoom={3}
         scrollWheelZoom={false}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', background: '#0a0a0a' }}
         attributionControl={false}
         zoomControl={false}
       >
-        {/* Esri World Imagery - satellite */}
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           attribution="Tiles &copy; Esri"
         />
+
+        {/* Global Connection Lines */}
+        {hub && markers.map((a, i) => {
+          if (a.city === hub.city) return null;
+          return (
+            <Polyline
+              key={`line-${a.city || i}`}
+              positions={[ [hub.lat, hub.lng], [a.lat, a.lng] ]}
+              pathOptions={{
+                color: '#00c8ff',
+                weight: 1.5,
+                opacity: 0.5,
+                dashArray: '4, 6',
+                lineJoin: 'round'
+              }}
+            />
+          );
+        })}
+
+        {/* Node Markers */}
         {markers.map((a, i) => (
           <CircleMarker
             key={a.city || a.hostname || i}

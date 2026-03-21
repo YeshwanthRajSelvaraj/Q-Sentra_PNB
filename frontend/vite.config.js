@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import reactOxc from '@vitejs/plugin-react-oxc'
 import tailwindcss from '@tailwindcss/vite'
 
-const backendTarget = 'http://localhost:8000';
+const backendTarget = 'http://127.0.0.1:8000';
 
 export default defineConfig({
   plugins: [
@@ -12,6 +12,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      '/auth':         { target: backendTarget, changeOrigin: true },
       '/api':          { target: backendTarget, changeOrigin: true },
       '/scan':         { target: backendTarget, changeOrigin: true },
       '/cbom':         { target: backendTarget, changeOrigin: true },
@@ -21,7 +22,7 @@ export default defineConfig({
       '/certificate':  { target: backendTarget, changeOrigin: true },
       '/verify':       { target: backendTarget, changeOrigin: true },
       '/pqc':          { target: backendTarget, changeOrigin: true },
-      '/ws':           { target: 'ws://localhost:8000', ws: true },
+      '/ws':           { target: 'ws://127.0.0.1:8000', ws: true },
     },
   },
 })

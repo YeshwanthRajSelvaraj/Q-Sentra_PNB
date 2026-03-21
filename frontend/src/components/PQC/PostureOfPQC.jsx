@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, Cell, RadialBarChart, RadialBar, ResponsiveContainer, Tooltip } from 'recharts';
 import { pqcPosture } from '../../mockData';
+import { downloadCSV } from '../../utils';
 
 /* ── Score ring using SVG ────────────────────────────────── */
 function ScoreRing({ value, max=100, size=140, color, label }) {
@@ -96,6 +97,7 @@ export default function PostureOfPQC() {
           <span style={{ fontFamily:'var(--font-mono)', fontSize:12, color:'var(--text-muted)' }}>
             Critical Apps: <span style={{ color:'var(--critical)' }}>{p.criticalCount}</span>
           </span>
+          <button className="btn btn-outline" style={{ marginLeft: 16 }} onClick={() => downloadCSV(p.assets, 'pqc_posture.csv')}>Export CSV</button>
         </div>
       </div>
 
@@ -105,24 +107,28 @@ export default function PostureOfPQC() {
         {/* Classification bar */}
         <div className="card animate-slide-up">
           <div className="card-header"><span className="card-title">Assets by Classification Grade</span></div>
-          <div className="card-body" style={{ display:'flex', alignItems:'flex-end', gap:16 }}>
+          <div className="card-body" style={{ display:'flex', alignItems:'flex-end', gap:16, height: 215, paddingBottom: 24 }}>
             {[
-              { label:'Elite', value:p.classificationGrade.elite, color:'var(--success)', h:120 },
-              { label:'Critical', value:p.classificationGrade.critical, color:'var(--danger)', h:20 },
-              { label:'Standard', value:p.classificationGrade.standard, color:'var(--warning)', h:35 },
-            ].map(b => (
-              <div key={b.label} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:8 }}>
-                <div style={{ fontFamily:'var(--font-display)', fontSize:22, fontWeight:700, color:b.color }}>{b.value}</div>
-                <div style={{
-                  width:'100%', height:b.h,
-                  background:`${b.color}22`,
-                  border:`1px solid ${b.color}44`,
-                  borderRadius:'6px 6px 0 0',
-                  transition:'height 1.2s var(--ease-out)',
-                }}/>
-                <div style={{ fontSize:11, color:'var(--text-muted)' }}>{b.label}</div>
-              </div>
-            ))}
+              { label:'Elite', value:p.classificationGrade.elite, color:'#10b981' },
+              { label:'Standard', value:p.classificationGrade.standard, color:'#f59e0b' },
+              { label:'Critical', value:p.classificationGrade.critical, color:'#ef4444' },
+            ].map(b => {
+              const maxVal = Math.max(p.classificationGrade.elite, p.classificationGrade.standard, p.classificationGrade.critical, 1);
+              const computedHeight = Math.max((b.value / maxVal) * 120, 10);
+              return (
+                <div key={b.label} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:8, justifyContent: 'flex-end', height: '100%' }}>
+                  <div style={{ fontFamily:'var(--font-display)', fontSize:22, fontWeight:700, color:b.color, marginBottom: 4 }}>{b.value}</div>
+                  <div style={{
+                    width:'100%', height:computedHeight,
+                    background:`${b.color}22`,
+                    border:`1px solid ${b.color}44`,
+                    borderRadius:'6px 6px 0 0',
+                    transition:'height 1.2s var(--ease-out)',
+                  }}/>
+                  <div style={{ fontSize:11, color:'var(--text-muted)', marginTop: 4 }}>{b.label}</div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

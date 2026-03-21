@@ -4,6 +4,13 @@ import {
   BarChart2, FileClock, Mail, HardDrive, Link2, MessageSquare,
   Settings, TrendingUp, Download, ArrowLeft,
 } from 'lucide-react';
+import { downloadCSV, downloadPDF } from '../utils';
+
+const dummyReportData = [
+  { Asset: 'portal.pnb.co.in', Risk: 'High', Type: 'Web App', Status: 'Confirmed', "Detection Date": "2026-03-21", "SSL Valid": "Yes", "PQC Ready": "No" },
+  { Asset: 'api.pnb.co.in', Risk: 'Critical', Type: 'API', Status: 'New', "Detection Date": "2026-03-20", "SSL Valid": "No", "PQC Ready": "No" },
+  { Asset: 'vpn.pnb.co.in', Risk: 'Low', Type: 'Gateway', Status: 'Confirmed', "Detection Date": "2026-03-15", "SSL Valid": "Yes", "PQC Ready": "Yes" },
+];
 
 const reportTypes = [
   'Executive Summary Report',
@@ -120,6 +127,7 @@ function ScheduledForm() {
 
 function OnDemandForm() {
   const [selectedType, setSelectedType] = useState('');
+  const [format, setFormat] = useState('PDF');
   return (
     <div>
       <div style={{ marginBottom:20 }}>
@@ -145,7 +153,10 @@ function OnDemandForm() {
                   display:'flex', alignItems:'center', gap:8,
                 }}>
                 <span style={{ display:'flex', alignItems:'center', color:'var(--text-muted)' }}>
-                  {[BarChart2,Search,FileText,ShieldCheck,ShieldCheck,TrendingUp][reportTypes.indexOf(r)]({size:14})}
+                  {(() => {
+                    const IconCmp = [BarChart2,Search,FileText,ShieldCheck,ShieldCheck,TrendingUp][reportTypes.indexOf(r)];
+                    return <IconCmp size={14} />;
+                  })()}
                 </span>
                 {r}
               </div>
@@ -178,7 +189,7 @@ function OnDemandForm() {
             <div style={{ display:'flex', gap:10, alignItems:'center', flexWrap:'wrap' }}>
               <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'var(--text-secondary)' }}>
                 File Format:
-                <select className="filter-select" style={{ height:28, fontSize:11 }}>
+                <select className="filter-select" style={{ height:28, fontSize:11 }} value={format} onChange={e => setFormat(e.target.value)}>
                   <option>PDF</option><option>XLSX</option><option>CSV</option>
                 </select>
               </div>
@@ -191,7 +202,7 @@ function OnDemandForm() {
             </div>
           </div>
 
-          <button className="btn btn-primary" style={{ alignSelf:'flex-end', display:'flex', alignItems:'center', gap:6 }}>
+          <button className="btn btn-primary" onClick={() => (format === 'PDF' ? downloadPDF() : downloadCSV(dummyReportData, `report.${format.toLowerCase()}`))} style={{ alignSelf:'flex-end', display:'flex', alignItems:'center', gap:6 }}>
             <BarChart2 size={15}/> Generate Report
           </button>
         </div>
