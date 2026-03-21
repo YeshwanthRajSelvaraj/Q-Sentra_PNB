@@ -3,6 +3,8 @@ Q-Sentra Security Module
 JWT authentication, password hashing, and RBAC middleware.
 """
 import hashlib
+import pyotp
+from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -14,20 +16,23 @@ from core.config import get_settings
 
 settings = get_settings()
 
-# ── Password Hashing (SHA-256 for prototype; use Argon2 in production) ──
-_SALT = "qsentra-salt-2026"
+import bcrypt
+
 security_scheme = HTTPBearer()
 
-
 def hash_password(password: str) -> str:
-    """Hash a plaintext password using SHA-256 with salt."""
-    return hashlib.sha256(f"{_SALT}{password}".encode()).hexdigest()
-
+    """Hash a plaintext password using bcrypt natively."""
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
 
 def verify_password(plain: str, hashed: str) -> bool:
-    """Verify a password against its hash."""
-    return hash_password(plain) == hashed
+    """Verify a password against its bcrypt hash natively."""
+    return bcrypt.checkpw(plain.encode('utf-8'), hashed.encode('utf-8'))
 
+def verify_totp(secret: str, otp: str) -> bool:
+    """Verify standard pyotp TOTP (with 90-sec tolerance for prototypes)"""
+    totp = pyotp.TOTP(secret)
+    return totp.verify(otp, valid_window=2)
 
 # ── JWT Token Management ──
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -83,6 +88,7 @@ DEMO_USERS = {
         "password_hash": hash_password("admin123"),
         "role": "admin",
         "full_name": "System Administrator",
+        "totp_secret": "JBSWY3DPEHPK3PXP", # standard base32 secret
     },
     "analyst": {
         "user_id": "2",
@@ -90,6 +96,7 @@ DEMO_USERS = {
         "password_hash": hash_password("analyst123"),
         "role": "analyst",
         "full_name": "Security Analyst",
+        "totp_secret": "JBSWY3DPEHPK3PXP",
     },
     "devops": {
         "user_id": "3",
@@ -97,6 +104,7 @@ DEMO_USERS = {
         "password_hash": hash_password("devops123"),
         "role": "devops",
         "full_name": "DevOps Engineer",
+        "totp_secret": "JBSWY3DPEHPK3PXP",
     },
 }
 

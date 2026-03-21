@@ -96,12 +96,8 @@ export default function Sidebar({ collapsed, onToggle }) {
   return (
     <nav className={`sidebar${collapsed ? ' collapsed' : ''}`}>
       {/* Logo */}
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">Q</div>
-        <div className="sidebar-logo-text">
-          <div className="sidebar-logo-name">Q-Sentra</div>
-          <div className="sidebar-logo-sub">PNB QuantumGuard</div>
-        </div>
+      <div className="sidebar-logo" style={{ padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', height: 85, overflow: 'hidden' }}>
+        <img src="/logo.png" alt="Q-Sentra Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'screen', filter: 'invert(1) hue-rotate(180deg) brightness(1.5)', transform: 'scale(1.9)' }} />
       </div>
 
       {/* Nav sections */}

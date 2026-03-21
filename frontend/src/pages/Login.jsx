@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { authAPI } from '../services/apiService';
 
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -10,13 +11,14 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
     try {
-      // In demo mode, accept any login
-      localStorage.setItem('qsentra_token', 'demo-jwt-token');
-      localStorage.setItem('qsentra_user', JSON.stringify({ username: username || 'admin', role: 'admin' }));
-      setTimeout(() => { setLoading(false); onLogin(); }, 800);
+      const res = await authAPI.login({ username, password, otp: '' });
+      localStorage.setItem('qsentra_token', res.access_token);
+      localStorage.setItem('qsentra_user', JSON.stringify(res.user));
+      setTimeout(() => { setLoading(false); onLogin(); }, 600);
     } catch (err) {
-      setError('Authentication failed');
+      setError('Authentication failed. Check credentials.');
       setLoading(false);
     }
   };
@@ -24,12 +26,8 @@ export default function Login({ onLogin }) {
   return (
     <div className="login-container">
       <div className="login-card">
-        <div className="login-logo">
-          <div className="login-logo-icon">Q</div>
-          <div>
-            <h1>Q-Sentra</h1>
-            <p>PNB Quantum Guard</p>
-          </div>
+        <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+          <img src="/logo.png" alt="Q-Sentra Logo" style={{ width: '100%', maxWidth: '280px', height: 'auto', objectFit: 'contain' }} />
         </div>
 
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
@@ -50,15 +48,16 @@ export default function Login({ onLogin }) {
             <label className="form-label">Password</label>
             <input className="form-input" type="password" placeholder="Enter password" value={password} onChange={e => setPassword(e.target.value)} />
           </div>
-          {error && <div style={{ color: '#ef4444', fontSize: '0.82rem', marginBottom: 12 }}>{error}</div>}
+
+          {error && <div style={{ color: '#ef4444', fontSize: '0.82rem', marginBottom: 16 }}>{error}</div>}
           <button className="btn-login" type="submit" disabled={loading}>
-            {loading ? '🔐 Authenticating...' : '🛡️ Secure Login'}
+            {loading ? 'Authenticating...' : 'Secure Login'}
           </button>
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 24 }}>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-            {['MFA Enabled', 'TLS 1.3', 'AES-256'].map(tag => (
+            {['TLS 1.3', 'AES-256'].map(tag => (
               <span key={tag} style={{ fontSize: '0.65rem', padding: '3px 8px', borderRadius: 12, background: 'var(--accent-glow)', color: 'var(--accent-secondary)', fontWeight: 500 }}>{tag}</span>
             ))}
           </div>

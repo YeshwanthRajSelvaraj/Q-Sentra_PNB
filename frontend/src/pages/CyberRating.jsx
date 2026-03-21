@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { ratingAPI } from '../services/apiService';
 import { cyberRating as RATING_FALLBACK } from '../mockData';
+import { downloadCSV } from '../utils';
 
 const tiers = [
   {
@@ -125,7 +126,7 @@ export default function CyberRating() {
           <h1 className="page-title">Cyber Rating</h1>
           <p className="page-subtitle">Consolidated PQC security tier ratings for all enterprise assets</p>
         </div>
-        <button className="btn btn-outline">Download Rating Report</button>
+        <button className="btn btn-outline" onClick={() => downloadCSV(urlScores, 'cyber_rating_report.csv')}>Download Rating Report</button>
       </div>
 
       {/* Enterprise score */}
@@ -197,8 +198,8 @@ export default function CyberRating() {
         <div className="card-header"><span className="card-title">Tier Classification Reference</span></div>
         <div className="card-body" style={{ padding:'12px 16px' }}>
           {tiers.map((t, i) => (
-            <div key={t.tier} className="tier-row" style={{ animationDelay:`${i*0.08}s` }}>
-              <div>
+            <div key={t.tier} className="tier-row" style={{ alignItems: 'center', animationDelay:`${i*0.08}s` }}>
+              <div style={{ width: 140, flexShrink: 0 }}>
                 <div style={{ fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-muted)', letterSpacing:'0.1em' }}>{t.tier}</div>
                 <div className="tier-num" style={{ color:t.color }}>{t.name}</div>
                 <div style={{
@@ -206,13 +207,13 @@ export default function CyberRating() {
                   borderRadius:10, fontSize:11, color:t.color, display:'inline-block', marginTop:4,
                 }}>{t.range}</div>
               </div>
-              <div className="tier-info">
+              <div className="tier-info" style={{ flex: 1, paddingRight: 24 }}>
                 <div className="tier-title">{t.security}</div>
-                <div className="tier-criteria">{t.criteria}</div>
+                <div className="tier-criteria" style={{ marginTop: 4, fontSize: 12, color: 'var(--text-secondary)' }}>{t.criteria}</div>
               </div>
               <div style={{
                 padding:'8px 14px', background:t.bg, border:`1px solid ${t.color}33`,
-                borderRadius:6, fontSize:11, color:t.color, maxWidth:200, lineHeight:1.5,
+                borderRadius:6, fontSize:11, color:t.color, width: 240, flexShrink: 0, lineHeight:1.5,
               }}>
                 {t.action}
               </div>

@@ -9,6 +9,10 @@ import CBOM from './components/CBOM/CBOM';
 import PostureOfPQC from './components/PQC/PostureOfPQC';
 import CyberRating from './pages/CyberRating';
 import Reporting from './pages/Reporting';
+import Remediation from './pages/Remediation';
+import Certificates from './pages/Certificates';
+import Compliance from './pages/Compliance';
+import Login from './pages/Login';
 import './index.css';
 
 /* Placeholder for pages not yet implemented */
@@ -22,13 +26,22 @@ const Placeholder = ({ name }) => (
 
 export default function App() {
   const [collapsed, setCollapsed] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('qsentra_token'));
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <Router>
       <div className="app-shell">
         <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
         <div className={`main-wrapper${collapsed ? ' sidebar-collapsed' : ''}`}>
-          <Header collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} />
+          <Header collapsed={collapsed} onToggle={() => setCollapsed(c => !c)} onLogout={() => {
+              localStorage.removeItem('qsentra_token');
+              localStorage.removeItem('qsentra_user');
+              setIsAuthenticated(false);
+          }} />
           <main className="content-area">
             <Routes>
               <Route path="/"                element={<Navigate to="/dashboard" replace />} />
@@ -39,9 +52,9 @@ export default function App() {
               <Route path="/posture-pqc"     element={<PostureOfPQC />} />
               <Route path="/cyber-rating"    element={<CyberRating />} />
               <Route path="/reporting"       element={<Reporting />} />
-              <Route path="/remediation"     element={<Placeholder name="Remediation" />} />
-              <Route path="/certificates"    element={<Placeholder name="Certificates" />} />
-              <Route path="/compliance"      element={<Placeholder name="Compliance" />} />
+              <Route path="/remediation"     element={<Remediation />} />
+              <Route path="/certificates"    element={<Certificates />} />
+              <Route path="/compliance"      element={<Compliance />} />
               <Route path="*"               element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </main>

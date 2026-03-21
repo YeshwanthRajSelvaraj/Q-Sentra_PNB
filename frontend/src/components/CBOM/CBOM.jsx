@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
 import { cbomData } from '../../mockData';
+import { downloadCSV } from '../../utils';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -54,6 +56,7 @@ const renderLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name
 };
 
 export default function CBOM() {
+  const navigate = useNavigate();
   const { totalApps, sitesSurveyed, activeCerts, weakCrypto, certIssues,
           keyLengthDist, cipherUsage, topCAs, encryptionProtocols, appCerts } = cbomData;
 
@@ -64,7 +67,7 @@ export default function CBOM() {
           <h1 className="page-title">Cryptographic Bill of Materials</h1>
           <p className="page-subtitle">Complete visibility into cryptographic posture across all assets</p>
         </div>
-        <button className="btn btn-outline">Export CBOM Report</button>
+        <button className="btn btn-outline" onClick={() => downloadCSV(appCerts, 'cbom_report.csv')}>Export CBOM Report</button>
       </div>
 
       {/* Top stats */}
@@ -198,7 +201,7 @@ export default function CBOM() {
             Immediate remediation recommended — these are quantum-vulnerable.
           </div>
         </div>
-        <button className="btn btn-outline btn-sm" style={{ marginLeft:'auto', borderColor:'rgba(239,68,68,0.4)', color:'var(--danger)', flexShrink:0 }}>
+        <button className="btn btn-outline btn-sm" style={{ marginLeft:'auto', borderColor:'rgba(239,68,68,0.4)', color:'var(--danger)', flexShrink:0 }} onClick={() => navigate('/remediation')}>
           View Remediation
         </button>
       </div>

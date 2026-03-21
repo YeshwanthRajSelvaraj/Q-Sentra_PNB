@@ -154,3 +154,19 @@ export const scoreHistory = [
   { month:'Feb', score:42.8 },
   { month:'Mar', score:43.4 },
 ];
+
+export const MOCK_TASKS = [
+  { taskId: 'REM-101', assetId: 'portal.pnb.co.in', title: 'Upgrade web server TLS configuration', status: 'pending', priority: 'critical', phase: 1, effortHours: 12, dueDate: '2026-05-15' },
+  { taskId: 'REM-102', assetId: 'api.pnb.co.in', title: 'Rotate API gateway certificates to PQC algorithms', status: 'in_progress', priority: 'high', phase: 2, effortHours: 24, dueDate: '2026-08-01' },
+  { taskId: 'REM-103', assetId: 'vpn.pnb.co.in', title: 'Replace legacy VPN concentrator', status: 'completed', priority: 'medium', phase: 3, effortHours: 40, dueDate: '2026-11-20' },
+  { taskId: 'REM-104', assetId: 'mail.pnb.co.in', title: 'Deploy quantum-safe mail gateways', status: 'pending', priority: 'high', phase: 1, effortHours: 18, dueDate: '2026-06-10' }
+];
+
+export const MOCK_CERTS = [
+  { certId: 'CERT-001', assetId: 'portal.pnb.co.in', quantumScore: 92, algorithms: ['Dilithium3', 'Kyber768'], issuedAt: '2026-01-10', validUntil: '2027-01-10', status: 'Active', certificateHash: '8f434346648...8c92', blockchainTx: '0x99A31...', blockNumber: '1439201', network: 'Ethereum' },
+  { certId: 'CERT-002', assetId: 'api.pnb.co.in', quantumScore: 85, algorithms: ['SPHINCS+', 'Kyber512'], issuedAt: '2026-02-15', validUntil: '2027-02-15', status: 'Active', certificateHash: '1b3d2290f9...32bb', blockchainTx: '0x32BB1...', blockNumber: '1452902', network: 'Ethereum' },
+  { certId: 'CERT-003', assetId: 'treasury.pnb.co.in', quantumScore: 98, algorithms: ['Dilithium5', 'Kyber1024'], issuedAt: '2026-03-05', validUntil: '2027-03-05', status: 'Active', certificateHash: '5e8c1822f3...990z', blockchainTx: '0x1C2F0...', blockNumber: '1488121', network: 'Ethereum' }
+];
+
+export const getScoreColor = (score) => score > 80 ? '#22c55e' : score > 50 ? '#eab308' : '#ef4444';
+export const getScoreClass = (score) => score > 80 ? 'safe' : score > 50 ? 'moderate' : 'high';
