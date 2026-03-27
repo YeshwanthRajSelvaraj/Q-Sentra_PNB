@@ -3,6 +3,16 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://qsentra-backend.onrender.com/api/:path*" },
+    { "source": "/scan/:path*", "destination": "https://qsentra-backend.onrender.com/scan/:path*" },
+    { "source": "/cbom/:path*", "destination": "https://qsentra-backend.onrender.com/cbom/:path*" },
+    { "source": "/score/:path*", "destination": "https://qsentra-backend.onrender.com/score/:path*" },
+    { "source": "/risk/:path*", "destination": "https://qsentra-backend.onrender.com/risk/:path*" },
+    { "source": "/remediation/:path*", "destination": "https://qsentra-backend.onrender.com/remediation/:path*" },
+    { "source": "/certificate/:path*", "destination": "https://qsentra-backend.onrender.com/certificate/:path*" },
+    { "source": "/verify/:path*", "destination": "https://qsentra-backend.onrender.com/verify/:path*" },
+    { "source": "/health", "destination": "https://qsentra-backend.onrender.com/health" },
+    { "source": "/docs", "destination": "https://qsentra-backend.onrender.com/docs" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
