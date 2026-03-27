@@ -1,7 +1,9 @@
+import API_BASE_URL from '../config';
+
 export const dashboardService = {
   getMetrics: async () => {
     try {
-      const resp = await fetch('http://127.0.0.1:8000/api/dashboard/metrics');
+      const resp = await fetch(`${API_BASE_URL}/api/dashboard/metrics`);
       if (!resp.ok) return null;
       return await resp.json();
     } catch (e) {
@@ -11,7 +13,7 @@ export const dashboardService = {
   },
   getRecentActivity: async () => {
     try {
-      const resp = await fetch('http://127.0.0.1:8000/api/dashboard/recent-activity');
+      const resp = await fetch(`${API_BASE_URL}/api/dashboard/recent-activity`);
       if (!resp.ok) return [];
       return await resp.json();
     } catch (e) {
@@ -21,7 +23,7 @@ export const dashboardService = {
   },
   getGeoDistribution: async () => {
     try {
-      const resp = await fetch('http://127.0.0.1:8000/api/dashboard/geodistribution');
+      const resp = await fetch(`${API_BASE_URL}/api/dashboard/geodistribution`);
       if (!resp.ok) return [];
       return await resp.json();
     } catch (e) {
@@ -31,7 +33,7 @@ export const dashboardService = {
   },
   scanOnDemand: async (target) => {
     try {
-      const resp = await fetch('http://127.0.0.1:8000/api/scan/on-demand', {
+      const resp = await fetch(`${API_BASE_URL}/api/scan/on-demand`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target })

@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, RadarC
 import { MOCK_ASSETS, ASSET_STATS, getScoreColor, getScoreClass, getRiskIcon } from '../mockData';
 import PQCGauge from '../components/PQC/PQCGauge';
 import SHAPExplainer from '../components/PQC/SHAPExplainer';
+import API_BASE_URL from '../config';
 
 const PQC_ALGOS = [
   { algo: 'ML-KEM-768', fips: '203', type: 'KEM', adopted: MOCK_ASSETS.filter(a => a.keyExchange === 'ML-KEM-768').length, total: ASSET_STATS.total, level: 'Level 3' },
@@ -33,7 +34,7 @@ function AssetScoreViewer() {
     if (!hostname) return;
     setLoading(true);
     try {
-      const resp = await fetch(`http://127.0.0.1:8000/api/pqc-score/${hostname}`);
+      const resp = await fetch(`${API_BASE_URL}/api/pqc-score/${hostname}`);
       const json = await resp.json();
       setData(json);
     } catch (e) {
@@ -52,7 +53,7 @@ function AssetScoreViewer() {
 
   const batchScore = async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/pqc-score/batch`);
+      await fetch(`${API_BASE_URL}/api/pqc-score/batch`);
       alert("Batch scoring initiated in background.");
     } catch (e) {
       console.error(e);

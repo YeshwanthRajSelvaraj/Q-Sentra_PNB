@@ -1,11 +1,13 @@
 /**
  * Q-Sentra Unified API Service
  * All backend calls go through this module.
- * Uses relative paths so Vite dev-proxy handles CORS automatically.
+ * In dev, Vite proxy handles routing. In prod, calls go to Render backend.
  * Falls back gracefully to mock data when the backend is unavailable.
  */
 
-const BASE = ''; // Vite proxies /api → http://localhost:8000
+import API_BASE_URL from '../config';
+
+const BASE = API_BASE_URL;
 
 // ─── token helpers ────────────────────────────────────────────────────────────
 const getToken = () => localStorage.getItem('qsentra_token');

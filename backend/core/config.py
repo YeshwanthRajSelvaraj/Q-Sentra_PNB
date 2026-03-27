@@ -34,7 +34,8 @@ class Settings:
 
     # ── CORS ──
     CORS_ORIGINS: list = os.getenv(
-        "CORS_ORIGINS", "http://localhost:3000,http://localhost:5173"
+        "CORS_ORIGINS",
+        "http://localhost:3000,http://localhost:5173,https://frontend-bj7991lw7-yeshwanths-projects-27e7f09a.vercel.app,https://frontend-7e7f09a.vercel.app"
     ).split(",")
 
     # ── Scanning ──
