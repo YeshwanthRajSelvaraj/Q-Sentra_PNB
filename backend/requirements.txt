@@ -35,5 +35,11 @@ numpy==2.2.1
 # ── CORS + Security ──
 python-multipart==0.0.19
 
+# ── MFA / OTP ──
+pyotp==2.9.0
+
+# ── Async HTTP ──
+aiohttp==3.9.3
+
 # ── Utilities ──
 python-dotenv==1.0.1
