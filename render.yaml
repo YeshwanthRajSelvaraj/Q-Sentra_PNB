@@ -1,0 +1,22 @@
+# Q-Sentra Render Blueprint
+# Deploy using: https://render.com/deploy
+
+services:
+  - type: web
+    name: qsentra-backend
+    runtime: python
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DEMO_MODE
+        value: "true"
+      - key: DEBUG
+        value: "false"
+      - key: JWT_SECRET
+        value: "qsentra-render-production-secret-2026"
+      - key: CORS_ORIGINS
+        value: "https://frontend-bj7991lw7-yeshwanths-projects-27e7f09a.vercel.app,https://frontend-7e7f09a.vercel.app"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
