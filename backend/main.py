@@ -81,10 +81,12 @@ app = FastAPI(
 )
 
 # ── CORS ──
+# Allow all origins – Vercel generates unique deployment URLs each time,
+# so a static allowlist breaks on every redeploy.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
