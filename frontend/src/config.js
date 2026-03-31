@@ -1,11 +1,14 @@
 /**
  * Q-Sentra Environment Configuration
  *
- * All API requests use same-origin (empty string).
- * - In production: Vercel rewrites proxy /api/* → Render backend
- * - In development: Vite proxy does the same
+ * Production: Direct cross-origin requests to Render backend.
+ * Development: Vite proxy (same-origin).
  */
 
-export const API_BASE_URL = '';
+const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+export const API_BASE_URL = isProduction
+  ? 'https://qsentra-backend.onrender.com'
+  : '';
 
 export default API_BASE_URL;
