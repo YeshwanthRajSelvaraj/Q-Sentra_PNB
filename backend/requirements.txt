@@ -43,3 +43,7 @@ aiohttp==3.9.3
 
 # ── Utilities ──
 python-dotenv==1.0.1
+pytest
+black
+flake8
+httpx
